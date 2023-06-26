@@ -1,0 +1,22 @@
+{
+  "environment": "development",
+  "log_output": "logs/sync.log",
+  "log_level": "debug",
+  "tv_time": {
+    "token": {
+      "symfony": "",
+      "tvst_remember": ""
+    },
+    "accept_language": ""
+  },
+  "plex": {
+    "base_url": "",
+    "token": "",
+    "account_id": 1,
+    "init_viewed_at": 1687097531
+  },
+  "timer": 1,
+  "file_storage": {
+    "filename": "files/link.json"
+  }
+}
