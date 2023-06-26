@@ -1,0 +1,8 @@
+tmp/*
+logs/*
+files/*
+config/development.json
+build/*
+coverage-all.out
+coverage.out
+RELEASE_NOTES.md

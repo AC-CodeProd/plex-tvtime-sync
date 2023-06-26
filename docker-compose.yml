@@ -1,0 +1,25 @@
+version: "3.1"
+services:
+  plex-tvtime-sync:
+    container_name: plex-tvtime-sync
+    user: "${UID}:${GID}"
+    networks:
+      - plex-tvtime-sync
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: development
+      args:
+        - TZ=${TZ}
+        - UID=${UID}
+        - GID=${GID}
+    environment:
+      DEBUG: ${DEBUG}
+      GO_ENV: ${GO_ENV}
+      LOG_LEVEL: ${LOG_LEVEL}
+      TZ: ${TZ}
+    command: sh -c "go mod download && make run-live"
+    volumes:
+      - .:/go/src/plex-tvtime-sync
+networks:
+  plex-tvtime-sync:
