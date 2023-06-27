@@ -109,7 +109,7 @@ This application uses a JSON configuration file to set up various parameters. He
 | `plex.base_url` | The base URL of your Plex server. | `Your Plex url` |
 | `plex.token` | Your Plex access token. | `Your Plex token` |
 | `plex.account_id` | Your Plex account ID. | `1` |
-| `plex.init_viewed_at` | Sets the initial date for viewing history. | `""` |
+| `plex.init_viewed_at` | Sets the initial date for viewing history. The date is in `YYYY-MM-DD hh:mm:ss` | `""` |
 | `timer` | Sets the interval (in minute) at which the application syncs with Plex and TVTime. | `30` |
 | `file_storage.filename` | The file where the application stores persistent data. | `files/link.json` |
 
