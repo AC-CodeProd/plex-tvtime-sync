@@ -18,27 +18,24 @@ type TvTimeUsecase interface {
 type TvTimeUsecaseParams struct {
 	fx.In
 
-	Helpers          lib.Helpers
 	Logger           lib.Logger
 	TvTimeRepository repositories.TvTimeRepository
 }
 
 type tvTimeUsecase struct {
-	helpers          lib.Helpers
 	logger           lib.Logger
 	tvTimeRepository repositories.TvTimeRepository
 }
 
 func NewTvTimeUsecase(ttuP TvTimeUsecaseParams) TvTimeUsecase {
 	return &tvTimeUsecase{
-		helpers:          ttuP.Helpers,
 		logger:           ttuP.Logger,
 		tvTimeRepository: ttuP.TvTimeRepository,
 	}
 }
 
 func (tU *tvTimeUsecase) SearchShow(showName string) ([]entities.TvTimeSearch, error) {
-	names, _ := tU.helpers.FuncNameAndFile()
+	const names = "__tvtime_usecase.go__ : SearchShow"
 	tvTimeSearchs, err := tU.tvTimeRepository.SearchShow(showName)
 	if err != nil {
 		tU.logger.Error(fmt.Sprintf("%s | %s", names, err))
@@ -49,7 +46,7 @@ func (tU *tvTimeUsecase) SearchShow(showName string) ([]entities.TvTimeSearch, e
 }
 
 func (tU *tvTimeUsecase) GetShow(serieID int) (*entities.Show, error) {
-	names, _ := tU.helpers.FuncNameAndFile()
+	const names = "__tvtime_usecase.go__ : GetShow"
 	show, err := tU.tvTimeRepository.GetShow(serieID)
 	if err != nil {
 		tU.logger.Error(fmt.Sprintf("%s | %s", names, err))
@@ -60,7 +57,7 @@ func (tU *tvTimeUsecase) GetShow(serieID int) (*entities.Show, error) {
 }
 
 func (tU *tvTimeUsecase) MarkAsWatched(episodeId int) (bool, error) {
-	names, _ := tU.helpers.FuncNameAndFile()
+	const names = "__tvtime_usecase.go__ : MarkAsWatched"
 	good, err := tU.tvTimeRepository.MarkAsWatched(episodeId)
 	if err != nil {
 		tU.logger.Error(fmt.Sprintf("%s | %s", names, err))

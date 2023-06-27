@@ -43,11 +43,14 @@ func wrapSubCommand(name string, cmd lib.Command, opt fx.Option) *cobra.Command 
 			)
 			ctx := context.Background()
 			app := fx.New(opt, opts)
-			err := app.Start(ctx)
-			if err != nil {
+			if err := app.Start(ctx); err != nil {
 				logger.Fatal(fmt.Sprintf("%s | %s", names, err))
+				panic(fmt.Sprintf("%s | %s", names, err))
 			}
-			_ = app.Stop(ctx)
+			if err := app.Stop(ctx); err != nil {
+				logger.Fatal(fmt.Sprintf("%s | %s", names, err))
+				panic(fmt.Sprintf("%s | %s", names, err))
+			}
 		},
 	}
 
