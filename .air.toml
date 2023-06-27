@@ -16,7 +16,7 @@ cmd = "go build -o ./tmp/main ./main.go"
 # Watch these filename extensions.
 include_ext = ["go", "tpl", "tmpl", "html", "json"]
 # Ignore these filename extensions or directories.
-exclude_dir = ["logs", "assets", "tmp", "build,'"vendor", "frontend/node_modules"]
+exclude_dir = ["logs", "assets", "tmp", "build", "vendor", "frontend/node_modules"]
 # Watch these directories if you specified.
 include_dir = []
 # Exclude files.
