@@ -14,33 +14,47 @@ import (
 )
 
 type PlexApi struct {
-	helpers lib.Helpers
-	logger  lib.Logger
+	logger lib.Logger
 }
 
 type PlexApiParams struct {
 	fx.In
 
-	Helpers lib.Helpers
-	Logger  lib.Logger
+	Logger lib.Logger
 }
 
 func (pA *PlexApi) GetLibaryHistory(baseUrl string, plexToken string, sort string, viewedAt *int64, accountId *int) ([]entities.PlexHistory, error) {
-	names, _ := pA.helpers.FuncNameAndFile()
-	url := fmt.Sprintf("%s/status/sessions/history/all?X-Plex-Token=%s&sort=%s", baseUrl, plexToken, sort)
+	const names = "__plex_api.go__ : GetLibaryHistory"
+	getId := func(video entities.Video) (int, error) {
+		split := strings.Split(video.GrandparentKey, "/")
+		idStr := split[len(split)-1]
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			pA.logger.Error(fmt.Sprintf("%s | %s", names, err))
+			return 0, err
+		}
+		return id, nil
+	}
+	var (
+		container  entities.MediaContainer
+		historical []entities.PlexHistory
+	)
+
+	mUrl := fmt.Sprintf("%s/status/sessions/history/all?X-Plex-Token=%s&sort=%s", baseUrl, plexToken, sort)
 	if viewedAt != nil {
-		url = fmt.Sprintf("%s&viewedAt>=%d", url, *viewedAt)
+		mUrl = fmt.Sprintf("%s&viewedAt>=%d", mUrl, *viewedAt)
 	}
 	if accountId != nil {
-		url = fmt.Sprintf("%s&accountID=%d", url, *accountId)
+		mUrl = fmt.Sprintf("%s&accountID=%d", mUrl, *accountId)
 	}
-	pA.logger.Info(fmt.Sprintf("%s | %s", names, url))
-	resp, err := http.Get(url)
+	pA.logger.Info(fmt.Sprintf("%s | %s", names, mUrl))
+
+	resp, err := http.Get(mUrl)
 	if err != nil {
 		pA.logger.Error(fmt.Sprintf("%s | %s", names, err))
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer closeFile(resp.Body)
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -48,30 +62,30 @@ func (pA *PlexApi) GetLibaryHistory(baseUrl string, plexToken string, sort strin
 		return nil, err
 	}
 
-	var container entities.MediaContainer
-	xml.Unmarshal([]byte(body), &container)
-	var historys []entities.PlexHistory
+	if err := xml.Unmarshal(body, &container); err != nil {
+		pA.logger.Error(fmt.Sprintf("%s | %s", names, err))
+		return nil, err
+	}
 	for _, video := range container.Videos {
-		if video.GrandparentKey != "" {
-			idStr := strings.Split(video.GrandparentKey, "/")[len(strings.Split(video.GrandparentKey, "/"))-1]
-			id, err := strconv.Atoi(idStr)
-			if err != nil {
-				pA.logger.Error(fmt.Sprintf("%s | %s", names, err))
-				return nil, err
-			}
-			historys = append(historys, entities.PlexHistory{
-				ID:            id,
-				EpisodeTitle:  video.Title,
-				ShowTitle:     video.GrandparentTitle,
-				EpisodeNumber: video.Index,
-				SeasonNumber:  video.ParentIndex,
-				Date:          video.OriginallyAvailableAt,
-				ViewedAt:      video.ViewedAt,
-			})
+		if len(video.GrandparentKey) == 0 {
+			continue
 		}
+		id, err := getId(video)
+		if err != nil {
+			return nil, err
+		}
+		historical = append(historical, entities.PlexHistory{
+			ID:            id,
+			EpisodeTitle:  video.Title,
+			ShowTitle:     video.GrandparentTitle,
+			EpisodeNumber: video.Index,
+			SeasonNumber:  video.ParentIndex,
+			Date:          video.OriginallyAvailableAt,
+			ViewedAt:      video.ViewedAt,
+		})
 	}
 
-	return historys, nil
+	return historical, nil
 }
 
 func GetPlexApi(paP PlexApiParams) PlexApi {

@@ -16,12 +16,10 @@ type PlexRepository interface {
 type PlexRepositoryParams struct {
 	fx.In
 
-	Helpers lib.Helpers
 	PlexApi api.PlexApi
 	Logger  lib.Logger
 }
 type plexRepository struct {
-	helpers lib.Helpers
 	plexApi api.PlexApi
 	logger  lib.Logger
 }
@@ -29,20 +27,19 @@ type plexRepository struct {
 // NewPlexRepository initialize users repository
 func NewPlexRepository(prP PlexRepositoryParams) PlexRepository {
 	return &plexRepository{
-		helpers: prP.Helpers,
 		plexApi: prP.PlexApi,
 		logger:  prP.Logger,
 	}
 }
 
 func (pR *plexRepository) GetLibaryHistory(baseUrl string, plexToken string, sort string, viewedAt *int64, accountId *int) ([]entities.PlexHistory, error) {
-	names, _ := pR.helpers.FuncNameAndFile()
-	var historys []entities.PlexHistory
+	const names = "__plex_repository.go__ : GetLibaryHistory"
+	var historical []entities.PlexHistory
 
-	historys, err := pR.plexApi.GetLibaryHistory(baseUrl, plexToken, sort, viewedAt, accountId)
+	historical, err := pR.plexApi.GetLibaryHistory(baseUrl, plexToken, sort, viewedAt, accountId)
 	if err != nil {
 		pR.logger.Error(fmt.Sprintf("%s | %s", names, err))
-		return historys, err
+		return historical, err
 	}
-	return historys, nil
+	return historical, nil
 }
