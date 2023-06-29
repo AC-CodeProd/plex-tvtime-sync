@@ -13,9 +13,8 @@ import (
 type Link map[int]int
 
 type JsonStorage struct {
-	helpers Helpers
-	config  Config
-	logger  Logger
+	config Config
+	logger Logger
 }
 
 // Params defines the base objects for a storage.
@@ -56,7 +55,7 @@ func ensureDir(path string) error {
 }
 
 func (jS *JsonStorage) GetLinks() (Link, error) {
-	names, _ := jS.helpers.FuncNameAndFile()
+	const names = "__storage.go__ : GetLinks"
 	jS.logger.Info(names)
 	links := make(Link)
 	err := ensureDir(jS.config.FileStorage.Filename)
@@ -84,7 +83,7 @@ func (jS *JsonStorage) GetLinks() (Link, error) {
 }
 
 func (jS *JsonStorage) AddLink(idShowPlex int, idShowTvTime int) error {
-	names, _ := jS.helpers.FuncNameAndFile()
+	const names = "__storage.go__ : AddLink"
 	jS.logger.Info(fmt.Sprintf("%s | %d - %d", names, idShowPlex, idShowTvTime))
 	links, err := jS.GetLinks()
 	if err != nil {
@@ -110,7 +109,7 @@ func (jS *JsonStorage) AddLink(idShowPlex int, idShowTvTime int) error {
 }
 
 func (jS *JsonStorage) HasLink(idShowPlex int) (bool, error) {
-	names, _ := jS.helpers.FuncNameAndFile()
+	const names = "__storage.go__ : HasLink"
 	jS.logger.Info(fmt.Sprintf("%s | %d", names, idShowPlex))
 	links, err := jS.GetLinks()
 	if err != nil {
@@ -124,7 +123,7 @@ func (jS *JsonStorage) HasLink(idShowPlex int) (bool, error) {
 }
 
 func (jS *JsonStorage) GetLink(idShowPlex int) (int, bool, error) {
-	names, _ := jS.helpers.FuncNameAndFile()
+	const names = "__storage.go__ : GetLink"
 	jS.logger.Info(fmt.Sprintf("%s | %d", names, idShowPlex))
 	links, err := jS.GetLinks()
 	if err != nil {
