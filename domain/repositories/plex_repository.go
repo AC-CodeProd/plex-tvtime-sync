@@ -3,29 +3,25 @@ package repositories
 import (
 	"fmt"
 	"plex-tvtime-sync/domain/entities"
-	"plex-tvtime-sync/infrastructure/api"
+	"plex-tvtime-sync/domain/interfaces"
 	"plex-tvtime-sync/pkg/lib"
 
 	"go.uber.org/fx"
 )
 
-type PlexRepository interface {
-	GetLibaryHistory(baseUrl string, plexToken string, sort string, viewedAt *int64, accountId *int) ([]entities.PlexHistory, error)
-}
-
 type PlexRepositoryParams struct {
 	fx.In
 
-	PlexApi api.PlexApi
+	PlexApi interfaces.IPlexApi
 	Logger  lib.Logger
 }
 type plexRepository struct {
-	plexApi api.PlexApi
+	plexApi interfaces.IPlexApi
 	logger  lib.Logger
 }
 
 // NewPlexRepository initialize users repository
-func NewPlexRepository(prP PlexRepositoryParams) PlexRepository {
+func NewPlexRepository(prP PlexRepositoryParams) interfaces.IPlexRepository {
 	return &plexRepository{
 		plexApi: prP.PlexApi,
 		logger:  prP.Logger,
@@ -42,4 +38,12 @@ func (pR *plexRepository) GetLibaryHistory(baseUrl string, plexToken string, sor
 		return historical, err
 	}
 	return historical, nil
+}
+
+func (pR *plexRepository) DownloadParentThumb(baseUrl, plexToken, parentThumbUrl, dir string) (string, error) {
+	return pR.plexApi.DownloadParentThumb(baseUrl, plexToken, parentThumbUrl, dir)
+}
+
+func (pR *plexRepository) DownloadThumb(baseUrl, plexToken, thumbUrl, dir string) (string, error) {
+	return pR.plexApi.DownloadThumb(baseUrl, plexToken, thumbUrl, dir)
 }

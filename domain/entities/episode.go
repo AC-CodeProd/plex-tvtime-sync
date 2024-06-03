@@ -1,8 +1,8 @@
 package entities
 
 type Episode struct {
-	ID      int
+	ID      int64
 	Name    string
-	AirDate string
+	Number  int
 	Watched bool
 }

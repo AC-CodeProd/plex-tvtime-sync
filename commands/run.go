@@ -2,7 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"plex-tvtime-sync/domain/process"
+	"plex-tvtime-sync/interfaces/process"
 	"plex-tvtime-sync/pkg/lib"
 
 	"github.com/spf13/cobra"

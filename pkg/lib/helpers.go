@@ -32,3 +32,9 @@ func NewHelpers(hP HelpersParams) HelpersResult {
 		Helpers: helpers,
 	}
 }
+
+// func (h *Helpers) CloseFile(f io.ReadCloser) {
+// 	if f != nil {
+// 		f.Close()
+// 	}
+// }

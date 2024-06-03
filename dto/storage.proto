@@ -1,0 +1,8 @@
+syntax = "proto3";
+option go_package = "./dto";
+
+package dto;
+
+message IntMap {
+    map<int64, int64> map = 1;
+}

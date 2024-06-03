@@ -6,6 +6,5 @@ import "go.uber.org/fx"
 var Module = fx.Options(
 	fx.Provide(GetLogger),
 	fx.Provide(GetConfig),
-	fx.Provide(GetJsonStorage),
 	fx.Provide(NewHelpers),
 )

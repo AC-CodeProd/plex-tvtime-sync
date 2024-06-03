@@ -13,32 +13,51 @@ import (
 )
 
 type Config struct {
-	Environment string      `json:"environment"`
-	LogOutput   string      `json:"log_output"`
-	LogLevel    string      `json:"log_level"`
-	TZ          string      `json:"tz"`
-	Timer       int         `json:"timer"`
-	TvTime      TvTime      `json:"tv_time"`
-	Plex        Plex        `json:"plex"`
-	FileStorage FileStorage `json:"file_storage"`
+	Environment string  `json:"environment"`
+	Storage     Storage `json:"storage"`
+	LogLevel    string  `json:"log_level"`
+	LogOutput   string  `json:"log_output"`
+	Plex        Plex    `json:"plex"`
+	Timer       int     `json:"timer"`
+	TvTime      TvTime  `json:"tv_time"`
+	TZ          string  `json:"tz"`
+	Mailer      Mailer  `json:"mailer"`
 }
 
 type TvTime struct {
-	Token          TvTimeToken `json:"token"`
-	AcceptLanguage string      `json:"accept_language"`
-}
-type TvTimeToken struct {
-	Symfony      string `json:"symfony"`
-	TvstRemember string `json:"tvst_remember"`
+	AcceptLanguage     string `json:"accept_language"`
+	BaseUrl            string `json:"base_url"`
+	CountryCode        string `json:"country_code"`
+	Locale             string `json:"locale"`
+	SearchUrl          string `json:"search_url"`
+	SeriesUrl          string `json:"series_url"`
+	SeasonsUrl         string `json:"seasons_url"`
+	WatchedEpisodesUrl string `json:"watched_episodes_url"`
+	Token              string `json:"token"`
+	TokenType          string `json:"token_type"`
 }
 type Plex struct {
-	BaseUrl      string `json:"base_url"`
-	Token        string `json:"token"`
 	AccountId    int    `json:"account_id"`
+	BaseUrl      string `json:"base_url"`
 	InitViewedAt string `json:"init_viewed_at"`
+	ViewedAtSort string `json:"viewed_at_sort"`
+	Token        string `json:"token"`
 }
-type FileStorage struct {
+type Storage struct {
 	Filename string `json:"filename"`
+}
+
+type Mailer struct {
+	Recipient   string `json:"recipient"`
+	TemplateDir string `json:"template_dir"`
+	SMTP        SMTP   `json:"smtp"`
+}
+
+type SMTP struct {
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type configs []string

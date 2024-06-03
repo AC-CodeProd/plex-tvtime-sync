@@ -6,4 +6,6 @@ import "go.uber.org/fx"
 var Module = fx.Options(
 	fx.Provide(NewTvTimeUsecase),
 	fx.Provide(NewPlexUsecase),
+	fx.Provide(NewEmailUseCase),
+	fx.Provide(NewStorageUseCase),
 )
