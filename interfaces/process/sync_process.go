@@ -170,9 +170,8 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 											break
 										}
 									}
-									// if !episode.Watched {
-									if episode.Watched {
-										// sH.tvTimeUsecase.MarkAsWatched(episode.ID)
+									if !episode.Watched {
+										sH.tvTimeUsecase.MarkAsWatched(episode.ID)
 										messages = append(messages, struct {
 											Item   entities.PlexHistory
 											Err    error
@@ -182,7 +181,6 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 											Err:    nil,
 											Status: "MarkAsWatched",
 										})
-										// fmt.Printf("______________________________________ID:%d Episode:%d Saison:%d\n", episode.ID, episode.Number, season.Number)
 									}
 									wasFound = true
 									break
@@ -210,19 +208,6 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 	if len(messages) > 0 {
 		var filePath string
 		var err error
-		// for _, message := range messages {
-		// 	var chunks [][]var chunks [][]string
-		// 	if len(sectionSuccessEmails) == 2 {
-		// 		totalSectionSuccessEmails = append(totalSectionSuccessEmails, sectionSuccessEmails)
-		// 		sectionSuccessEmails = make([]*entities.SectionSuccessEmail, 2)
-		// 	}
-		// 	sectionSuccessEmail := entities.SectionSuccessEmail{
-		// 		CID:   imageBase64,
-		// 		Title: message.Item.ShowTitle,
-		// 	}
-		// 	sectionSuccessEmails = append(sectionSuccessEmails, &sectionSuccessEmail)
-		// 	// body.WriteString(fmt.Sprintf("%s\r\n", fmt.Sprintf(`<img src="cid:%s">`, imageBase64)))
-		// }
 		chunkSize := 2
 		cpt := 0
 		for i := 0; i < len(messages); i += chunkSize {
@@ -257,8 +242,6 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 					Data:         imageBase64,
 					Title:        message.Item.ShowTitle,
 					EpisodeTitle: message.Item.EpisodeTitle,
-					// Align: "left",
-					// Align: "right",
 				}
 				m := cpt % 2
 				if m != 0 {
