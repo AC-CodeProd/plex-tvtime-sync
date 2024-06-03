@@ -48,9 +48,9 @@ type Storage struct {
 }
 
 type Mailer struct {
-	Recipient   string `json:"recipient"`
-	TemplateDir string `json:"template_dir"`
-	SMTP        SMTP   `json:"smtp"`
+	Recipients  []string `json:"recipients"`
+	TemplateDir string   `json:"template_dir"`
+	SMTP        SMTP     `json:"smtp"`
 }
 
 type SMTP struct {

@@ -205,17 +205,62 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 		}
 	}
 	var totalSectionSuccessEmails [][]entities.SectionSuccessEmail
+	var totalSectionErrorEmails [][]entities.SectionErrorEmail
 	if len(messages) > 0 {
+		chunkSizeSuccess := 2
+		chunkSizeError := 2
 		var filePath string
 		var err error
-		chunkSize := 2
-		cpt := 0
-		for i := 0; i < len(messages); i += chunkSize {
-			end := i + chunkSize
-			if end > len(messages) {
-				end = len(messages)
+		cptSuccess := 0
+		cptError := 0
+		var messagesSuccess = make([]struct {
+			Item   entities.PlexHistory
+			Err    error
+			Status string
+		}, 0)
+		var messagesError = make([]struct {
+			Item   entities.PlexHistory
+			Err    error
+			Status string
+		}, 0)
+		for _, message := range messages {
+			if message.Status == "Error" {
+				messagesError = append(messagesError, message)
+			} else {
+				messagesSuccess = append(messagesSuccess, message)
 			}
-			tmpMessages := messages[i:end]
+		}
+		for i := 0; i < len(messagesError); i += chunkSizeError {
+			end := i + chunkSizeError
+			if end > len(messagesError) {
+				end = len(messagesError)
+			}
+			tmpMessages := messagesSuccess[i:end]
+			var sectionErrorEmails = make([]entities.SectionErrorEmail, 0)
+			for _, message := range tmpMessages {
+				cptError++
+				sectionErrorEmail := entities.SectionErrorEmail{
+					EpisodeTitle: message.Item.EpisodeTitle,
+					Error:        message.Err.Error(),
+					Title:        message.Item.ShowTitle,
+				}
+				m := cptSuccess % 2
+				if m != 0 {
+					sectionErrorEmail.Align = "left"
+				} else {
+					sectionErrorEmail.Align = "right"
+				}
+				sectionErrorEmails = append(sectionErrorEmails, sectionErrorEmail)
+			}
+			totalSectionErrorEmails = append(totalSectionErrorEmails, sectionErrorEmails)
+		}
+
+		for i := 0; i < len(messagesSuccess); i += chunkSizeSuccess {
+			end := i + chunkSizeSuccess
+			if end > len(messagesSuccess) {
+				end = len(messagesSuccess)
+			}
+			tmpMessages := messagesSuccess[i:end]
 			var sectionSuccessEmails = make([]entities.SectionSuccessEmail, 0)
 			for _, message := range tmpMessages {
 				filePath, err = sH.plexUsecase.DownloadParentThumb(sH.config.Plex.BaseUrl, sH.config.Plex.Token, message.Item.ParentThumb, "./tmp/thumb")
@@ -235,15 +280,15 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 					continue
 				}
 				imageBase64 := base64.StdEncoding.EncodeToString(imageBytes)
-				cpt++
-				cid := fmt.Sprintf("imageCID%d", cpt)
+				cptSuccess++
+				cid := fmt.Sprintf("imageCID%d", cptSuccess)
 				sectionSuccessEmail := entities.SectionSuccessEmail{
 					CID:          cid,
 					Data:         imageBase64,
-					Title:        message.Item.ShowTitle,
 					EpisodeTitle: message.Item.EpisodeTitle,
+					Title:        message.Item.ShowTitle,
 				}
-				m := cpt % 2
+				m := cptSuccess % 2
 				if m != 0 {
 					sectionSuccessEmail.Align = "left"
 				} else {
@@ -255,23 +300,17 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 		}
 		subject := "Plex TVTime Sync: La synchronisation est terminée"
 		_ = subject
-		// sH.emailUsecase.SendEmailWithTemplate(&entities.Email{
-		// 	Subject:              subject,
-		// 	Recipient:            sH.config.Mailer.Recipient,
-		// 	SectionSuccessEmails: totalSectionSuccessEmails,
-		// }, map[string]interface{}{
-		// 	"Subject":              subject,
-		// 	"SectionSuccessEmails": totalSectionSuccessEmails,
-		// 	"Username":             "Alain",
-		// 	// "SectionSuccessEmails": totalSectionSuccessEmails,
-		// })
+		email := entities.Email{
+			Subject:              subject,
+			Recipients:           sH.config.Mailer.Recipients,
+			SectionSuccessEmails: totalSectionSuccessEmails,
+			SectionErrorEmails:   totalSectionErrorEmails,
+		}
+		sH.emailUsecase.SendEmailWithTemplate(&email, map[string]interface{}{
+			"Subject":              email.Subject,
+			"SectionSuccessEmails": email.SectionSuccessEmails,
+			"SectionErrorEmails":   email.SectionErrorEmails,
+		})
 	}
-	// for _, v := range totalSectionSuccessEmails {
-	// 	for _, w := range v {
-
-	// 		fmt.Println(w.Align)
-	// 	}
-	// }
-	// fmt.Println("Iciiiiiiiiiiiiiiiiiiiiii", len(totalSectionSuccessEmails), totalSectionSuccessEmails)
 	sH.logger.Info(fmt.Sprintf("%s | Next check in %d minutes.", names, sH.config.Timer))
 }

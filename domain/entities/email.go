@@ -1,21 +1,25 @@
 package entities
 
 type Email struct {
-	Recipient            string
-	Subject              string
 	Body                 string
-	TemplateName         string
-	SectionSuccessEmails [][]SectionSuccessEmail
+	Recipients           []string
 	SectionErrorEmails   [][]SectionErrorEmail
+	SectionSuccessEmails [][]SectionSuccessEmail
+	Subject              string
+	TemplateName         string
 }
 
 type SectionErrorEmail struct {
+	Align        string
+	EpisodeTitle string
+	Error        string
+	Title        string
 }
 
 type SectionSuccessEmail struct {
-	CID          string
-	Title        string
-	EpisodeTitle string
-	Data         string
 	Align        string
+	CID          string
+	Data         string
+	EpisodeTitle string
+	Title        string
 }

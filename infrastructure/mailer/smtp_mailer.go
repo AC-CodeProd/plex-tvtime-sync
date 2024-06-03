@@ -30,7 +30,7 @@ func (sm *smtpMailer) loadTemplate() error {
 func (sm *smtpMailer) Send(email *entities.Email) error {
 	from := sm.config.Mailer.SMTP.Username
 	password := sm.config.Mailer.SMTP.Password
-	to := email.Recipient
+	to := email.Recipients
 	smtpHost := sm.config.Mailer.SMTP.Host
 	smtpPort := sm.config.Mailer.SMTP.Port
 	auth := smtp.PlainAuth("", from, password, smtpHost)
@@ -42,7 +42,7 @@ func (sm *smtpMailer) Send(email *entities.Email) error {
 
 	addr := fmt.Sprintf("%s:%d", smtpHost, smtpPort)
 	boundary := "unique-boundary-1"
-	header := make(map[string]string)
+	header := make(map[string]interface{})
 	header["From"] = from
 	header["To"] = to
 	header["Subject"] = email.Subject
@@ -70,7 +70,7 @@ func (sm *smtpMailer) Send(email *entities.Email) error {
 		}
 	}
 	msg.WriteString("\r\n--" + boundary + "--")
-	return smtp.SendMail(addr, auth, from, []string{to}, msg.Bytes())
+	return smtp.SendMail(addr, auth, from, to, msg.Bytes())
 }
 
 func (sm *smtpMailer) RenderTemplate(templateName string, data interface{}) (string, error) {
