@@ -10,16 +10,20 @@ type Email struct {
 }
 
 type SectionErrorEmail struct {
-	Align        string
-	EpisodeTitle string
-	Error        string
-	Title        string
+	Align         string
+	CID           string
+	Data          string
+	EpisodeNumber string
+	EpisodeTitle  string
+	Error         string
+	Title         string
 }
 
 type SectionSuccessEmail struct {
-	Align        string
-	CID          string
-	Data         string
-	EpisodeTitle string
-	Title        string
+	Align         string
+	CID           string
+	Data          string
+	EpisodeNumber string
+	EpisodeTitle  string
+	Title         string
 }

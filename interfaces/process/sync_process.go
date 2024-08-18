@@ -235,16 +235,37 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 			if end > len(messagesError) {
 				end = len(messagesError)
 			}
-			tmpMessages := messagesSuccess[i:end]
+			tmpMessages := messagesError[i:end]
 			var sectionErrorEmails = make([]entities.SectionErrorEmail, 0)
 			for _, message := range tmpMessages {
-				cptError++
-				sectionErrorEmail := entities.SectionErrorEmail{
-					EpisodeTitle: message.Item.EpisodeTitle,
-					Error:        message.Err.Error(),
-					Title:        message.Item.ShowTitle,
+				filePath, err = sH.plexUsecase.DownloadParentThumb(sH.config.Plex.BaseUrl, sH.config.Plex.Token, message.Item.ParentThumb, "./tmp/thumb")
+				if err != nil {
+					fmt.Println(err)
 				}
-				m := cptSuccess % 2
+				if filePath == "" {
+					filePath, err = sH.plexUsecase.DownloadThumb(sH.config.Plex.BaseUrl, sH.config.Plex.Token, message.Item.Thumb, "./tmp/thumb")
+					if err != nil {
+						fmt.Println(err)
+						continue
+					}
+				}
+				imageBytes, err := os.ReadFile(filePath)
+				if err != nil {
+					fmt.Println(err)
+					continue
+				}
+				imageBase64 := base64.StdEncoding.EncodeToString(imageBytes)
+				cptError++
+				cid := fmt.Sprintf("imageCIDError%d", cptError)
+				sectionErrorEmail := entities.SectionErrorEmail{
+					CID:           cid,
+					Data:          imageBase64,
+					EpisodeNumber: fmt.Sprintf("S%dE%d", message.Item.SeasonNumber, message.Item.EpisodeNumber),
+					EpisodeTitle:  message.Item.EpisodeTitle,
+					Error:         message.Err.Error(),
+					Title:         message.Item.ShowTitle,
+				}
+				m := cptError % 2
 				if m != 0 {
 					sectionErrorEmail.Align = "left"
 				} else {
@@ -281,12 +302,13 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 				}
 				imageBase64 := base64.StdEncoding.EncodeToString(imageBytes)
 				cptSuccess++
-				cid := fmt.Sprintf("imageCID%d", cptSuccess)
+				cid := fmt.Sprintf("imageCIDSuccess%d", cptSuccess)
 				sectionSuccessEmail := entities.SectionSuccessEmail{
-					CID:          cid,
-					Data:         imageBase64,
-					EpisodeTitle: message.Item.EpisodeTitle,
-					Title:        message.Item.ShowTitle,
+					CID:           cid,
+					Data:          imageBase64,
+					EpisodeNumber: fmt.Sprintf("S%dE%d ", message.Item.SeasonNumber, message.Item.EpisodeNumber),
+					EpisodeTitle:  message.Item.EpisodeTitle,
+					Title:         message.Item.ShowTitle,
 				}
 				m := cptSuccess % 2
 				if m != 0 {
@@ -306,11 +328,13 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 			SectionSuccessEmails: totalSectionSuccessEmails,
 			SectionErrorEmails:   totalSectionErrorEmails,
 		}
+		fmt.Println("icii", totalSectionErrorEmails)
 		sH.emailUsecase.SendEmailWithTemplate(&email, map[string]interface{}{
 			"Subject":              email.Subject,
 			"SectionSuccessEmails": email.SectionSuccessEmails,
 			"SectionErrorEmails":   email.SectionErrorEmails,
 		})
 	}
+
 	sH.logger.Info(fmt.Sprintf("%s | Next check in %d minutes.", names, sH.config.Timer))
 }

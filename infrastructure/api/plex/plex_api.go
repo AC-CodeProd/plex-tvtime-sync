@@ -63,11 +63,12 @@ func (pA *PlexApi) GetLibaryHistory(baseUrl string, plexToken string, sort strin
 		historical = append(historical, entities.PlexHistory{
 			Date:          video.OriginallyAvailableAt,
 			EpisodeNumber: video.Index,
+			EpisodeTitle:  video.Title,
 			ID:            id,
+			ParentThumb:   video.ParentThumb,
 			SeasonNumber:  video.ParentIndex,
 			ShowTitle:     video.GrandparentTitle,
 			Thumb:         video.Thumb,
-			ParentThumb:   video.ParentThumb,
 			ViewedAt:      video.ViewedAt,
 		})
 	}

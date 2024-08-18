@@ -143,13 +143,47 @@
                         padding-top: 30px; 
                         font-family: sans-serif;
                         color: #000000;">
-                    <img border="0" vspace="0" hspace="0" src="cid:{{.CID}}" width="250" height="360" alt="{{.EpisodeTitle}}"
+                    <img border="0" vspace="0" hspace="0" src="cid:{{.CID}}" width="220" height="320" alt="{{.EpisodeTitle}}"
                       title="{{.EpisodeTitle}}"
                       style="color: #000000; font-size: 10px; margin: 0; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: block; margin-bottom: 8px;" />
                     <br />
-                    <h1 style="color:#0B5073;">{{.Title}}</h1>
+                    <h5 style="color:#0B5073; margin: 0; padding: 0;">{{.Title}}</h5>
+                    <h6 style="color:#000000; margin: 0; padding: 0;">{{.EpisodeNumber}} - {{.EpisodeTitle}}</h6>
+                  </td>
+                </tr>
+              </table>
+              {{end}}
+            </td>
+          </tr>
+          {{end}}
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0;"
+        bgcolor="#F0F0F0">
+        <table border="0" cellpadding="0" cellspacing="0" align="center" width="600" style="border-collapse: collapse; border-spacing: 0; padding: 0; width: inherit;
+                	max-width: 600px;">
+          {{range .SectionErrorEmails}}
+          <tr>
+            <td align="center" valign="top"
+              style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 10px; padding-right: 10px;"
+              class="floaters">
+              {{range .}}
+              <table width="280" height="380" border="0" cellpadding="0" cellspacing="0" align="{{.Align}}" valign="top"
+                style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-spacing: 0; margin: 0; padding: 0; display: inline-table; float: none;"
+                class="floater">
+                <tr>
+                  <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0; margin: 0; padding: 0; padding-left: 15px; padding-right: 15px; font-size: 17px; font-weight: 400; line-height: 160%;
+                        padding-top: 30px; 
+                        font-family: sans-serif;
+                        color: #000000;">
+                    <img border="0" vspace="0" hspace="0" src="cid:{{.CID}}" width="220" height="320" alt="{{.EpisodeTitle}}"
+                      title="{{.EpisodeTitle}}"
+                      style="color: #000000; font-size: 10px; margin: 0; padding: 0; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; border: none; display: block; margin-bottom: 8px;" />
                     <br />
-                    <h2 style="color:#000000;">{{.EpisodeTitle}}</h2>
+                    <h5 style="color:#0B5073; margin: 0; padding: 0;">{{.Title}}</h5>
+                    <h6 style="color:#000000; margin: 0; padding: 0;">{{.EpisodeNumber}} - {{.EpisodeTitle}}</h6>
                   </td>
                 </tr>
               </table>

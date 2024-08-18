@@ -51,10 +51,10 @@ func (su *storageUseCase) LoadIntMap() (map[int]int, error) {
 	return result, nil
 }
 
-func (su *storageUseCase) AddSpecificPair(key, value *int64) error {
-	return su.storage.AddSpecificPair(key, value)
+func (su *storageUseCase) AddSpecificPair(plexId, tvtimeId *int64) error {
+	return su.storage.AddSpecificPair(plexId, tvtimeId)
 }
 
-func (su *storageUseCase) GetValue(key int64) (*int64, error) {
-	return su.storage.GetValue(key)
+func (su *storageUseCase) GetValue(plexId int64) (*int64, error) {
+	return su.storage.GetValue(plexId)
 }

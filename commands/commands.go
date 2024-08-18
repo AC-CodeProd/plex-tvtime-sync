@@ -12,6 +12,7 @@ import (
 
 var cmds = map[string]lib.Command{
 	"run": NewRunCommand(),
+	"cmd": NewCmdCommand(),
 }
 
 // get a list of sub commands

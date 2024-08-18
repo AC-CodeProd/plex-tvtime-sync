@@ -3,10 +3,12 @@ package mailer
 import (
 	"bytes"
 	"fmt"
+	"mime"
 	"net/smtp"
 	"path/filepath"
 	"plex-tvtime-sync/domain/entities"
 	"plex-tvtime-sync/domain/interfaces"
+	"strings"
 	"text/template"
 )
 
@@ -44,8 +46,8 @@ func (sm *smtpMailer) Send(email *entities.Email) error {
 	boundary := "unique-boundary-1"
 	header := make(map[string]interface{})
 	header["From"] = from
-	header["To"] = to
-	header["Subject"] = email.Subject
+	header["To"] = strings.Join(to, ",")
+	header["Subject"] = mime.QEncoding.Encode("UTF-8", email.Subject)
 	header["MIME-Version"] = "1.0"
 	// header["Content-Type"] = "text/plain; charset=\"UTF-8\";\n\n"
 	header["Content-Type"] = "multipart/mixed; boundary=\"" + boundary + "\""
@@ -59,6 +61,18 @@ func (sm *smtpMailer) Send(email *entities.Email) error {
 	msg.WriteString(email.Body)
 	if email.SectionSuccessEmails != nil {
 		for _, row := range email.SectionSuccessEmails {
+			for _, image := range row {
+				msg.WriteString("\r\n--" + boundary + "\r\n")
+				msg.WriteString(fmt.Sprintf("Content-ID: <%s>\r\n", image.CID))
+				msg.WriteString(fmt.Sprintf("Content-Disposition: inline; filename=\"%s\"\r\n", image.Title))
+				msg.WriteString("Content-Transfer-Encoding: base64\r\n")
+				msg.WriteString(fmt.Sprintf("Content-Type: %s; name=\"%s\"\r\n\r\n", "image/jpeg", image.Title))
+				msg.WriteString(image.Data)
+			}
+		}
+	}
+	if email.SectionErrorEmails != nil {
+		for _, row := range email.SectionErrorEmails {
 			for _, image := range row {
 				msg.WriteString("\r\n--" + boundary + "\r\n")
 				msg.WriteString(fmt.Sprintf("Content-ID: <%s>\r\n", image.CID))

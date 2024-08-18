@@ -133,8 +133,8 @@ func (tA *TVTimeApi) GetSeasonsDataBySerieId(serieId int64) ([]entities.Season, 
 	}
 
 	seasons = make([]entities.Season, 0)
-	episodes = make([]entities.Episode, 0)
 	for _, season := range seasonsResponse.Seasons {
+		episodes = make([]entities.Episode, 0)
 		if season.Number == 0 {
 			continue
 		}

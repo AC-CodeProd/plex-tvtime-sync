@@ -7,13 +7,13 @@ import (
 type IStorage interface {
 	Save(data *dto.IntMap) error
 	Load() (*dto.IntMap, error)
-	AddSpecificPair(key, value *int64) error
+	AddSpecificPair(plexId, tvtimeId *int64) error
 	GetValue(key int64) (*int64, error)
 }
 
 type IStorageUsecase interface {
 	SaveIntMap(data map[int]int) error
 	LoadIntMap() (map[int]int, error)
-	AddSpecificPair(key, value *int64) error
+	AddSpecificPair(plexId, tvtimeId *int64) error
 	GetValue(key int64) (*int64, error)
 }
