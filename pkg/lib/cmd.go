@@ -18,7 +18,7 @@ type Command interface {
 	Setup(cmd *cobra.Command)
 
 	// GetFlags returns string
-	GetFlags() []string
+	GetFlags() *map[string]any
 
 	// Run runs the command runner
 	// run returns command runner which is a function with dependency

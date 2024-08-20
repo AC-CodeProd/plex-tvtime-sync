@@ -32,7 +32,8 @@ func wrapSubCommand(name string, cmd lib.Command, opt fx.Option) *cobra.Command 
 		Use:   name,
 		Short: cmd.Short(),
 		Run: func(c *cobra.Command, args []string) {
-			if err := lib.SetupConfig(cmd.GetFlags()); err != nil {
+			flags := *cmd.GetFlags()
+			if err := lib.SetupConfig(flags["configPath"].([]string)); err != nil {
 				panic(fmt.Sprintf("%s | %s", names, err))
 			}
 			logger := lib.GetLogger()

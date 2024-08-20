@@ -26,8 +26,10 @@ func (rC *RunCommand) Setup(cmd *cobra.Command) {
 	_ = cmd.MarkFlagRequired("config")
 }
 
-func (rC *RunCommand) GetFlags() []string {
-	return rC.configPath
+func (rC *RunCommand) GetFlags() *map[string]any {
+	flags := make(map[string]any)
+	flags["configPath"] = rC.configPath
+	return &flags
 }
 
 func (rC *RunCommand) Run() lib.CommandRunner {

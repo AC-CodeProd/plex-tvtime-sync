@@ -7,3 +7,4 @@ coverage-all.out
 coverage.out
 RELEASE_NOTES.md
 storage.data
+.env

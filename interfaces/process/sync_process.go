@@ -86,7 +86,7 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 		Status string
 	}, 0)
 	for _, item := range plexHistorical {
-		sH.logger.Info(fmt.Sprintf("%s | %d: %s - S%dE%d - %s.", names, item.ID, item.ShowTitle, item.SeasonNumber, item.EpisodeNumber, item.EpisodeTitle))
+		sH.logger.Debug(fmt.Sprintf("%s | %d: %s - S%dE%d - %s.", names, item.ID, item.ShowTitle, item.SeasonNumber, item.EpisodeNumber, item.EpisodeTitle))
 		pattern := `plex://season/([a-z0-9]+)`
 		_ = pattern
 
@@ -263,6 +263,7 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 					EpisodeNumber: fmt.Sprintf("S%dE%d", message.Item.SeasonNumber, message.Item.EpisodeNumber),
 					EpisodeTitle:  message.Item.EpisodeTitle,
 					Error:         message.Err.Error(),
+					PlexID:        int(message.Item.ID),
 					Title:         message.Item.ShowTitle,
 				}
 				m := cptError % 2
@@ -308,6 +309,7 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 					Data:          imageBase64,
 					EpisodeNumber: fmt.Sprintf("S%dE%d ", message.Item.SeasonNumber, message.Item.EpisodeNumber),
 					EpisodeTitle:  message.Item.EpisodeTitle,
+					PlexID:        int(message.Item.ID),
 					Title:         message.Item.ShowTitle,
 				}
 				m := cptSuccess % 2
@@ -328,7 +330,14 @@ func (sH SyncProcess) start(lastCheck time.Time) {
 			SectionSuccessEmails: totalSectionSuccessEmails,
 			SectionErrorEmails:   totalSectionErrorEmails,
 		}
-		fmt.Println("icii", totalSectionErrorEmails)
+		// fmt.Println("icii", totalSectionErrorEmails)
+		for _, v := range totalSectionErrorEmails {
+			// fmt.Println(v)
+			for _, d := range v {
+				fmt.Println("PlexID", d.Title, d.PlexID)
+			}
+		}
+		// _ = email
 		sH.emailUsecase.SendEmailWithTemplate(&email, map[string]interface{}{
 			"Subject":              email.Subject,
 			"SectionSuccessEmails": email.SectionSuccessEmails,

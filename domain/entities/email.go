@@ -16,6 +16,7 @@ type SectionErrorEmail struct {
 	EpisodeNumber string
 	EpisodeTitle  string
 	Error         string
+	PlexID        int
 	Title         string
 }
 
@@ -25,5 +26,6 @@ type SectionSuccessEmail struct {
 	Data          string
 	EpisodeNumber string
 	EpisodeTitle  string
+	PlexID        int
 	Title         string
 }

@@ -31,7 +31,7 @@ func NewStorageUseCase(sup StorageUseCaseParams) interfaces.IStorageUsecase {
 	}
 }
 
-func (su *storageUseCase) SaveIntMap(data map[int]int) error {
+func (su *storageUseCase) Save(data map[int]int) error {
 	intMap := &dto.IntMap{Map: make(map[int64]int64)}
 	for k, v := range data {
 		intMap.Map[int64(k)] = int64(v)
@@ -39,7 +39,7 @@ func (su *storageUseCase) SaveIntMap(data map[int]int) error {
 	return su.storage.Save(intMap)
 }
 
-func (su *storageUseCase) LoadIntMap() (map[int]int, error) {
+func (su *storageUseCase) GetAllSpecificPair() (map[int]int, error) {
 	intMap, err := su.storage.Load()
 	if err != nil {
 		return nil, err

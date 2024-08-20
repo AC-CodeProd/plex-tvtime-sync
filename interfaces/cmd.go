@@ -30,3 +30,7 @@ func NewCMD(cP CMDParams) CMD {
 func (c CMD) AddSpecificPair(plexId, tvtimeId *int64) error {
 	return c.storageUseCase.AddSpecificPair(plexId, tvtimeId)
 }
+
+func (c CMD) GetAllSpecificPair() (map[int]int, error) {
+	return c.storageUseCase.GetAllSpecificPair()
+}

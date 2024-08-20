@@ -12,8 +12,8 @@ type IStorage interface {
 }
 
 type IStorageUsecase interface {
-	SaveIntMap(data map[int]int) error
-	LoadIntMap() (map[int]int, error)
+	Save(data map[int]int) error
+	GetAllSpecificPair() (map[int]int, error)
 	AddSpecificPair(plexId, tvtimeId *int64) error
 	GetValue(key int64) (*int64, error)
 }
